@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { GAME_ASSETS } from '../game/assets';
 import {
   GRID_COLS,
   GRID_ROWS,
@@ -226,7 +227,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     <div className="relative w-full aspect-[1514/1285] select-none">
       {/* Layer 1: Repaired Wooden & Gold Slot Cabinet with Clean Vertical Dividers & Side Lanterns */}
       <img
-        src="/assets/panels/slot-machine-outer-frame.png"
+        src={GAME_ASSETS.panels.slotMachineOuterFrame}
         alt="Lucky Shop Slot Machine"
         referrerPolicy="no-referrer"
         draggable={false}
@@ -235,7 +236,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
       {/* Layer 2: Repaired Sloped Red & Cream Striped Shop Awning Roof sitting right above the bulb strip */}
       <img
-        src="/assets/ui/shop-roof-awning.png"
+        src={GAME_ASSETS.ui.shopRoofAwning}
         alt=""
         referrerPolicy="no-referrer"
         draggable={false}
@@ -283,7 +284,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                       >
                         {isWinner && (
                           <img
-                            src="/assets/effects/win-glow.png"
+                            src={GAME_ASSETS.effects.winGlow}
                             alt=""
                             referrerPolicy="no-referrer"
                             draggable={false}

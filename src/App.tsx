@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { GAME_ASSETS } from './game/assets';
 import {
   BET_STEPS,
   DAILY_BONUS_COOLDOWN_MS,
@@ -286,7 +287,7 @@ export function App() {
       {/* Ambient Full-Screen Town Backdrop Blur for Wide Viewports */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <img
-          src="/assets/backgrounds/main-town.png"
+          src={GAME_ASSETS.backgrounds.mainTown}
           alt=""
           referrerPolicy="no-referrer"
           className="h-full w-full scale-105 object-cover object-center opacity-40 blur-md"
@@ -301,7 +302,7 @@ export function App() {
           <div className="ls-wood-panel rounded-3xl p-5">
             <div className="flex items-center gap-3">
               <img
-                src="/assets/icons/shop-upgrade-icon.png"
+                src={GAME_ASSETS.icons.shopUpgrade}
                 alt=""
                 referrerPolicy="no-referrer"
                 className="h-14 w-14 shrink-0 object-contain drop-shadow"
@@ -378,10 +379,10 @@ export function App() {
 
         {/* AUTHENTIC 9:16 PORTRAIT LUCKY SHOP SCREEN */}
         <main className="relative flex min-h-[100dvh] w-full max-w-[440px] flex-col justify-between overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.85)] sm:min-h-0 sm:aspect-[9/16] sm:h-[min(96dvh,850px)] sm:w-auto sm:max-w-none sm:rounded-[30px] sm:border-2 sm:border-amber-300/50">
-          {/* Portrait Fantasy Town Background from LuckyShop-AssetPack-v1.zip */}
+          {/* Portrait Fantasy Town Background */}
           <div className="pointer-events-none absolute inset-0 z-0">
             <img
-              src="/assets/backgrounds/main-town.png"
+              src={GAME_ASSETS.backgrounds.mainTown}
               alt="Lucky Shop Fantasy Town"
               referrerPolicy="no-referrer"
               draggable={false}
@@ -396,7 +397,7 @@ export function App() {
               <div
                 className="relative flex h-8 min-w-[136px] items-center justify-center rounded-full px-8 shadow-md"
                 style={{
-                  backgroundImage: 'url(/assets/ui/coin-bar.png)',
+                  backgroundImage: `url(${GAME_ASSETS.ui.coinBar})`,
                   backgroundSize: '100% 100%',
                 }}
               >
@@ -405,7 +406,7 @@ export function App() {
                 </span>
               </div>
               <img
-                src="/assets/icons/coin-icon.png"
+                src={GAME_ASSETS.icons.coin}
                 alt="Gold"
                 referrerPolicy="no-referrer"
                 draggable={false}
@@ -418,7 +419,7 @@ export function App() {
                 className="absolute -right-2 flex h-11 w-11 items-center justify-center transition-transform active:scale-92"
               >
                 <img
-                  src="/assets/ui/top-plus-button.png"
+                  src={GAME_ASSETS.ui.topPlusButton}
                   alt=""
                   referrerPolicy="no-referrer"
                   draggable={false}
@@ -432,7 +433,7 @@ export function App() {
               <div
                 className="relative flex h-8 min-w-[108px] items-center justify-center rounded-full px-7 shadow-md"
                 style={{
-                  backgroundImage: 'url(/assets/ui/gem-bar.png)',
+                  backgroundImage: `url(${GAME_ASSETS.ui.gemBar})`,
                   backgroundSize: '100% 100%',
                 }}
               >
@@ -441,7 +442,7 @@ export function App() {
                 </span>
               </div>
               <img
-                src="/assets/icons/gem-icon.png"
+                src={GAME_ASSETS.icons.gem}
                 alt="Gems"
                 referrerPolicy="no-referrer"
                 draggable={false}
@@ -454,7 +455,7 @@ export function App() {
                 className="absolute -right-2 flex h-11 w-11 items-center justify-center transition-transform active:scale-92"
               >
                 <img
-                  src="/assets/ui/top-plus-button.png"
+                  src={GAME_ASSETS.ui.topPlusButton}
                   alt=""
                   referrerPolicy="no-referrer"
                   draggable={false}
@@ -471,7 +472,7 @@ export function App() {
               className="flex h-11 w-11 items-center justify-center transition-transform active:scale-92"
             >
               <img
-                src="/assets/ui/settings-button.png"
+                src={GAME_ASSETS.ui.settingsButton}
                 alt=""
                 referrerPolicy="no-referrer"
                 draggable={false}
@@ -502,7 +503,7 @@ export function App() {
                 className="relative aspect-[904/1119] w-[22.5%] shrink-0 transition-transform active:scale-95"
               >
                 <img
-                  src="/assets/panels/level-badge.png"
+                  src={GAME_ASSETS.panels.levelBadge}
                   alt="Player Level"
                   referrerPolicy="no-referrer"
                   draggable={false}
@@ -530,7 +531,7 @@ export function App() {
               <div className="relative flex w-[54%] flex-col items-center pt-0.5">
                 {/* Cat Mascot peeking behind & above the Lucky Shop sign */}
                 <img
-                  src="/assets/ui/lucky-shop-cat-mascot.png"
+                  src={GAME_ASSETS.ui.luckyShopCatMascot}
                   alt="Lucky Shop Cat Mascot"
                   referrerPolicy="no-referrer"
                   draggable={false}
@@ -540,7 +541,7 @@ export function App() {
                 {/* Royal Purple & Gold Signboard Plate overlapping lower cat paws */}
                 <div className="relative z-20 -mt-[42%] aspect-[2042/1008] w-[116%]">
                   <img
-                    src="/assets/ui/lucky-shop-title.png"
+                    src={GAME_ASSETS.ui.luckyShopTitle}
                     alt=""
                     referrerPolicy="no-referrer"
                     draggable={false}
@@ -564,7 +565,7 @@ export function App() {
                 className="relative mt-2 aspect-[935/1039] w-[23%] shrink-0 transition-transform active:scale-95"
               >
                 <img
-                  src="/assets/panels/daily-bonus.png"
+                  src={GAME_ASSETS.panels.dailyBonus}
                   alt="Daily Bonus"
                   referrerPolicy="no-referrer"
                   draggable={false}
@@ -573,7 +574,7 @@ export function App() {
                 {dailyBonusReady && (
                   <span className="absolute -top-1 -right-1 z-10 flex h-5 w-5 items-center justify-center">
                     <img
-                      src="/assets/ui/red-notification-badge.png"
+                      src={GAME_ASSETS.ui.redNotificationBadge}
                       alt=""
                       className="absolute inset-0 h-full w-full object-contain"
                     />
@@ -614,7 +615,7 @@ export function App() {
               <div
                 className="relative flex h-[50px] items-center justify-between rounded-xl px-1"
                 style={{
-                  backgroundImage: 'url(/assets/panels/win-panel.png)',
+                  backgroundImage: `url(${GAME_ASSETS.panels.win})`,
                   backgroundSize: '100% 100%',
                 }}
               >
@@ -626,7 +627,7 @@ export function App() {
                   className="-ml-1.5 flex h-10 w-10 shrink-0 items-center justify-center transition-transform active:scale-90 disabled:opacity-45"
                 >
                   <img
-                    src="/assets/ui/bet-minus-button.png"
+                    src={GAME_ASSETS.ui.betMinusButton}
                     alt=""
                     referrerPolicy="no-referrer"
                     draggable={false}
@@ -651,7 +652,7 @@ export function App() {
                   className="-mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center transition-transform active:scale-90 disabled:opacity-45"
                 >
                   <img
-                    src="/assets/ui/bet-plus-button.png"
+                    src={GAME_ASSETS.ui.betPlusButton}
                     alt=""
                     referrerPolicy="no-referrer"
                     draggable={false}
@@ -671,7 +672,7 @@ export function App() {
                 }`}
               >
                 <img
-                  src="/assets/ui/spin-button.png"
+                  src={GAME_ASSETS.ui.spinButton}
                   alt=""
                   referrerPolicy="no-referrer"
                   draggable={false}
@@ -686,7 +687,7 @@ export function App() {
               <div
                 className="relative flex h-[50px] flex-col items-center justify-center rounded-xl px-2 leading-none"
                 style={{
-                  backgroundImage: 'url(/assets/panels/win-panel.png)',
+                  backgroundImage: `url(${GAME_ASSETS.panels.win})`,
                   backgroundSize: '100% 100%',
                 }}
               >
@@ -713,7 +714,7 @@ export function App() {
               className="relative aspect-[2167/759] w-full transition-transform active:scale-97"
             >
               <img
-                src="/assets/panels/shop-upgrade-card.png"
+                src={GAME_ASSETS.panels.shopUpgradeCard}
                 alt="Shop Upgrade"
                 referrerPolicy="no-referrer"
                 draggable={false}
@@ -750,7 +751,7 @@ export function App() {
               className="relative aspect-[2116/921] w-full transition-transform active:scale-97"
             >
               <img
-                src="/assets/panels/lock-level-card.png"
+                src={GAME_ASSETS.panels.lockLevelCard}
                 alt="Slot Unlock Status"
                 referrerPolicy="no-referrer"
                 draggable={false}
@@ -781,7 +782,7 @@ export function App() {
             className="relative z-30 aspect-[5165/744] w-full shrink-0"
           >
             <img
-              src="/assets/ui/bottom-nav-bar.png"
+              src={GAME_ASSETS.ui.bottomNavBar}
               alt=""
               referrerPolicy="no-referrer"
               draggable={false}

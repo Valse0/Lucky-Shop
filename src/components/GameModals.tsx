@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Volume2, VolumeX, RotateCcw, Sparkles, Check } from 'lucide-react';
+import { GAME_ASSETS } from '../game/assets';
 import {
   GEM_EXCHANGE_PACKS,
   PAYLINES,
@@ -115,7 +116,7 @@ export const GameModals: React.FC<GameModalsProps> = ({
             <>
               <div className="ls-parchment-card flex items-center gap-3.5 rounded-2xl p-4 text-[#422006]">
                 <img
-                  src="/assets/icons/shop-upgrade-icon.png"
+                  src={GAME_ASSETS.icons.shopUpgrade}
                   alt="Lucky Shop Building"
                   referrerPolicy="no-referrer"
                   className="h-16 w-16 shrink-0 object-contain drop-shadow"
@@ -160,7 +161,7 @@ export const GameModals: React.FC<GameModalsProps> = ({
                     className="mt-4 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl border-2 border-lime-300 bg-gradient-to-b from-emerald-400 to-green-700 px-4 py-2.5 font-display text-base font-bold text-white shadow-md transition-transform active:scale-98 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <img
-                      src="/assets/icons/green-arrow-up.png"
+                      src={GAME_ASSETS.icons.greenArrowUp}
                       alt=""
                       className="h-5 w-5 object-contain"
                       referrerPolicy="no-referrer"
@@ -181,7 +182,7 @@ export const GameModals: React.FC<GameModalsProps> = ({
           {activeModal === 'daily' && (
             <div className="ls-parchment-card flex flex-col items-center rounded-2xl p-5 text-center text-[#422006]">
               <img
-                src="/assets/panels/daily-bonus.png"
+                src={GAME_ASSETS.panels.dailyBonus}
                 alt="Daily Bonus Chest"
                 className="h-28 w-28 object-contain drop-shadow-md"
                 referrerPolicy="no-referrer"
@@ -193,10 +194,10 @@ export const GameModals: React.FC<GameModalsProps> = ({
                 Scaled by {currentShop.name} (Lv. {currentShop.level}) · Local device clock
               </p>
               <div className="font-num mt-3 flex items-center gap-2 text-base font-bold text-[#7c2d12]">
-                <img src="/assets/icons/coin-icon.png" alt="" className="h-5 w-5" />
+                <img src={GAME_ASSETS.icons.coin} alt="" className="h-5 w-5" />
                 <span>+{currentShop.dailyBonusGold.toLocaleString()}</span>
                 <span aria-hidden="true">·</span>
-                <img src="/assets/icons/gem-icon.png" alt="" className="h-5 w-5" />
+                <img src={GAME_ASSETS.icons.gem} alt="" className="h-5 w-5" />
                 <span>+{currentShop.dailyBonusGems}</span>
               </div>
 
@@ -225,7 +226,7 @@ export const GameModals: React.FC<GameModalsProps> = ({
                   >
                     <div className="flex items-center gap-3">
                       <img
-                        src="/assets/icons/coin-icon.png"
+                        src={GAME_ASSETS.icons.coin}
                         alt=""
                         className="h-9 w-9 object-contain"
                         referrerPolicy="no-referrer"
@@ -246,7 +247,7 @@ export const GameModals: React.FC<GameModalsProps> = ({
                       className="flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-xl border border-fuchsia-300/60 bg-gradient-to-b from-purple-500 to-purple-800 px-3.5 py-2 font-num text-xs font-bold text-white shadow-sm active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
                     >
                       <img
-                        src="/assets/icons/gem-icon.png"
+                        src={GAME_ASSETS.icons.gem}
                         alt=""
                         className="h-4 w-4 object-contain"
                         referrerPolicy="no-referrer"

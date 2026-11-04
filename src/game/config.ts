@@ -1,3 +1,5 @@
+import { GAME_ASSETS } from './assets';
+
 export const GRID_COLS = 5;
 export const GRID_ROWS = 3;
 
@@ -40,7 +42,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   cherry: {
     id: 'cherry',
     name: 'Ruby Cherries',
-    assetPath: '/assets/symbols/cherry.png',
+    assetPath: GAME_ASSETS.symbols.cherry,
     weight: 20,
     royalWeight: 14,
     payouts: { 3: 0.6, 4: 1.5, 5: 4 },
@@ -49,7 +51,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   watermelon: {
     id: 'watermelon',
     name: 'Sweet Melon',
-    assetPath: '/assets/symbols/watermelon.png',
+    assetPath: GAME_ASSETS.symbols.watermelon,
     weight: 18,
     royalWeight: 13,
     payouts: { 3: 0.8, 4: 2, 5: 5 },
@@ -58,7 +60,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   grapes: {
     id: 'grapes',
     name: 'Royal Grapes',
-    assetPath: '/assets/symbols/grapes.png',
+    assetPath: GAME_ASSETS.symbols.grapes,
     weight: 17,
     royalWeight: 13,
     payouts: { 3: 1, 4: 2.5, 5: 6 },
@@ -67,7 +69,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   clover: {
     id: 'clover',
     name: 'Lucky Clover',
-    assetPath: '/assets/symbols/clover.png',
+    assetPath: GAME_ASSETS.symbols.clover,
     weight: 14,
     royalWeight: 11,
     payouts: { 3: 1.4, 4: 3.5, 5: 9 },
@@ -76,7 +78,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   bell: {
     id: 'bell',
     name: 'Golden Bell',
-    assetPath: '/assets/symbols/bell.png',
+    assetPath: GAME_ASSETS.symbols.bell,
     weight: 12,
     royalWeight: 10,
     payouts: { 3: 1.8, 4: 4.5, 5: 12 },
@@ -85,7 +87,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   chest: {
     id: 'chest',
     name: 'Treasure Chest',
-    assetPath: '/assets/symbols/chest.png',
+    assetPath: GAME_ASSETS.symbols.chest,
     weight: 8,
     royalWeight: 8,
     payouts: { 3: 2, 4: 6, 5: 18 },
@@ -95,7 +97,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   crown: {
     id: 'crown',
     name: 'Royal Crown',
-    assetPath: '/assets/symbols/crown.png',
+    assetPath: GAME_ASSETS.symbols.crown,
     weight: 6,
     royalWeight: 7,
     payouts: { 3: 3, 4: 8, 5: 24 },
@@ -104,7 +106,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   diamond: {
     id: 'diamond',
     name: 'Sky Diamond',
-    assetPath: '/assets/symbols/diamond.png',
+    assetPath: GAME_ASSETS.symbols.diamond,
     weight: 4,
     royalWeight: 6,
     payouts: { 3: 4.5, 4: 12, 5: 35 },
@@ -113,7 +115,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   seven: {
     id: 'seven',
     name: 'Lucky Red 7',
-    assetPath: '/assets/symbols/seven.png',
+    assetPath: GAME_ASSETS.symbols.seven,
     weight: 3,
     royalWeight: 5,
     payouts: { 3: 7, 4: 20, 5: 60 },
@@ -122,7 +124,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   crystal_orb: {
     id: 'crystal_orb',
     name: 'Mystic Orb',
-    assetPath: '/assets/symbols/crystal-orb.png',
+    assetPath: GAME_ASSETS.symbols.crystalOrb,
     weight: 0,
     royalWeight: 5,
     payouts: { 3: 5, 4: 14, 5: 40 },
@@ -132,7 +134,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   dragon_egg: {
     id: 'dragon_egg',
     name: 'Dragon Egg',
-    assetPath: '/assets/symbols/dragon-egg.png',
+    assetPath: GAME_ASSETS.symbols.dragonEgg,
     weight: 0,
     royalWeight: 4,
     payouts: { 3: 6, 4: 18, 5: 50 },
@@ -142,7 +144,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   jackpot: {
     id: 'jackpot',
     name: 'Sunburst Jackpot',
-    assetPath: '/assets/symbols/jackpot.png',
+    assetPath: GAME_ASSETS.symbols.jackpot,
     weight: 0,
     royalWeight: 2,
     payouts: { 3: 10, 4: 30, 5: 90 },
@@ -152,7 +154,7 @@ export const SYMBOLS: Record<SymbolId, SymbolDefinition> = {
   wild: {
     id: 'wild',
     name: 'Rainbow Wild',
-    assetPath: '/assets/symbols/wild.png',
+    assetPath: GAME_ASSETS.symbols.wild,
     weight: 0,
     royalWeight: 4,
     payouts: { 3: 8, 4: 25, 5: 75 },

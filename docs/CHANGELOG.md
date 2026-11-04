@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.1] - 2026-11-04
+### Fixed
+- **Published Site Stale Asset Cache Invalidation (`src/game/assets.ts`, `src/assets/game/**`)**: Migrated all 49 runtime game images out of unhashed `public/assets/*.png` paths (which collided with `/assets/*` immutable CDN/browser caching on published deployments) into high-DPI lossless-alpha `.webp` modules imported through Vite (`src/game/assets.ts`). Production builds now emit content-hashed filenames (`dist/assets/<name>-v3-<hash>.webp`) and reduce asset bundle size from ~29 MB to ~4.5 MB, guaranteeing that published deployments immediately load the repaired slot cabinet dividers, striped awning, single-bar level badge, crisp buttons, and updated symbols without stale browser/CDN cache hits.
+
 ## [0.3.0] - 2026-11-04
 ### Fixed
 - **Slot Cabinet Vertical Dividers & Inner Walls (`public/assets/panels/slot-machine-outer-frame.png`)**: Eliminated all 12 inpainting notches/scars along the 4 vertical reel dividers and inner left/right golden walls, smoothed the 5 cream reel wells, and restored the bottom-right golden scroll corner.
