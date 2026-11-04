@@ -29,6 +29,7 @@ import betPanel from '../assets/game/panels/bet-panel-v3.webp';
 import dailyBonusPanel from '../assets/game/panels/daily-bonus-v3.webp';
 import levelBadgePanel from '../assets/game/panels/level-badge-v3.webp';
 import lockLevelCardPanel from '../assets/game/panels/lock-level-card-v3.webp';
+import royalSlotsUnlockedCardPanel from '../assets/game/panels/royal-slots-unlocked-card-v3.webp';
 import parchmentPanel from '../assets/game/panels/parchment-panel-v3.webp';
 import reelBackgroundPanel from '../assets/game/panels/reel-background-v3.webp';
 import shopUpgradeCardPanel from '../assets/game/panels/shop-upgrade-card-v3.webp';
@@ -87,6 +88,7 @@ export const GAME_ASSETS = {
     dailyBonus: dailyBonusPanel,
     levelBadge: levelBadgePanel,
     lockLevelCard: lockLevelCardPanel,
+    royalSlotsUnlockedCard: royalSlotsUnlockedCardPanel,
     parchment: parchmentPanel,
     reelBackground: reelBackgroundPanel,
     shopUpgradeCard: shopUpgradeCardPanel,

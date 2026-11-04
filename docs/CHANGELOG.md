@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.1] - 2026-11-04
+### Fixed
+- **Royal Slots Parchment Disappearance Root Cause (`src/assets/game/panels/royal-slots-unlocked-card-v3.webp`, `src/App.tsx`, `src/game/assets.ts`)**: Diagnosed why the parchment panel disappeared in Published/Production mode at Level 5+ while remaining visible in Dev: the legacy `parchment-panel-v3.webp` file had 100% alpha transparency, causing the parchment graphic to vanish whenever a player leveled up to Royal Slots. Created a high-DPI seamless unlocked card asset (`2116x921`, 221KB) derived from the authentic scroll texture with zero ghost padlock residue, and centered the Royal Slots typography.
+- **Slot Cabinet Base & Control Skirt Corners (`src/components/SlotMachine.tsx`, `src/App.tsx`)**:
+  - Integrated Layer 0 solid mahogany cabinet backing (`bg-gradient-to-b from-[#5c270d] via-[#481d09] to-[#361305]`) behind `SlotMachine.tsx`, completely preventing the town cobblestone/flower background from shining through transparent frame notches or side scrolls.
+  - Aligned control skirt width and margins (`mx-[4.6%] -mt-[8%]`) to fit the golden cabinet side columns and corner scrolls, eliminating sharp protruding square shoulders.
+  - Added smooth symmetric rounded bottom corners (`rounded-b-2xl`) and warm bronze-gold beveled borders (`border-x-[3px] border-b-[3.5px] border-[#b36522]`) that blend into the cabinet architecture.
+- **Parchment Typography Alignment (`src/App.tsx`)**: Locked text (`Reach Level 5 to unlock new slots!`) is positioned neatly to the right of the bronze padlock (`left-[30%] right-[8%]`), while unlocked Royal Slots text is centered across the parchment (`inset-x-[8%]`).
+
 ## [0.4.0] - 2026-11-04
 ### Added
 - **Monte Carlo Economy Simulation (`src/game/__tests__/simulation.test.ts`)**: 100,000 spin simulation test validating Normal Mode balanced RTP (~39.8%, 26.8% hit frequency) and Royal Mode rewarding upside (~56.5% RTP, 45.2% hit frequency with Crown Wilds active).

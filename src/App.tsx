@@ -619,7 +619,7 @@ export function App() {
             </div>
 
             {/* Wooden Control Skirt: Bet (- 100 +) | SPIN | Win (0) */}
-            <div className="relative z-30 mx-[3.5%] -mt-[4.5%] grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 rounded-b-2xl border-x-[3px] border-b-[3px] border-[#c47a2c] bg-gradient-to-b from-[#7b3e1b] via-[#5e2c11] to-[#461e0a] px-2 py-2 shadow-[0_10px_20px_rgba(12,4,20,0.7)]">
+            <div className="relative z-20 mx-[4.6%] -mt-[8%] grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 rounded-b-2xl border-x-[3px] border-b-[3.5px] border-[#b36522] bg-gradient-to-b from-[#6c3214] via-[#4a1f0a] to-[#351305] px-2.5 py-2.5 shadow-[0_12px_24px_rgba(10,3,18,0.85)]">
               {/* Left: Bet Panel + High-Res Minus/Plus Buttons */}
               <div
                 className="relative flex h-[50px] items-center justify-between rounded-xl px-1"
@@ -763,29 +763,29 @@ export function App() {
                 src={
                   save.level < UNLOCK_ROYAL_SLOTS_LEVEL
                     ? GAME_ASSETS.panels.lockLevelCard
-                    : GAME_ASSETS.panels.parchment
+                    : GAME_ASSETS.panels.royalSlotsUnlockedCard
                 }
                 alt="Slot Unlock Status"
                 referrerPolicy="no-referrer"
                 draggable={false}
                 className="h-full w-full object-contain drop-shadow-[0_6px_10px_rgba(12,4,18,0.65)]"
               />
-              <div className="pointer-events-none absolute inset-y-0 left-[10%] right-[10%] flex flex-col items-center justify-center text-center leading-tight">
-                {save.level < UNLOCK_ROYAL_SLOTS_LEVEL ? (
-                  <span className="text-[10.5px] sm:text-[11.5px] font-extrabold text-[#47210b]">
+              {save.level < UNLOCK_ROYAL_SLOTS_LEVEL ? (
+                <div className="pointer-events-none absolute inset-y-0 left-[30%] right-[8%] flex flex-col items-center justify-center text-center leading-tight">
+                  <span className="text-[10px] sm:text-[11px] font-extrabold text-[#47210b]">
                     Reach Level {UNLOCK_ROYAL_SLOTS_LEVEL} to unlock new slots!
                   </span>
-                ) : (
-                  <>
-                    <span className="font-display text-[12px] sm:text-[13px] font-bold text-[#3f1907]">
-                      👑 Royal Slots
-                    </span>
-                    <span className="text-[10px] font-extrabold text-purple-900 mt-0.5">
-                      {save.royalModeEnabled ? '✨ Active · Tap to Toggle' : 'Unlocked · Tap On'}
-                    </span>
-                  </>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="pointer-events-none absolute inset-y-0 inset-x-[8%] flex flex-col items-center justify-center text-center leading-tight">
+                  <span className="font-display text-[12px] sm:text-[13px] font-bold text-[#3f1907]">
+                    👑 Royal Slots
+                  </span>
+                  <span className="text-[10px] font-extrabold text-purple-900 mt-0.5">
+                    {save.royalModeEnabled ? '✨ Active · Tap to Toggle' : 'Unlocked · Tap On'}
+                  </span>
+                </div>
+              )}
             </button>
           </section>
 

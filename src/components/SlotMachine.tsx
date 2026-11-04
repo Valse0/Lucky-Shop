@@ -225,6 +225,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
   return (
     <div className="relative w-full aspect-[1514/1285] select-none">
+      {/* Layer 0: Solid Mahogany Cabinet Backing - Prevents town street background from showing through frame notches/scrolls */}
+      <div className="pointer-events-none absolute inset-x-[4.6%] top-[14%] bottom-0 rounded-b-2xl bg-gradient-to-b from-[#5c270d] via-[#481d09] to-[#361305]" />
+
       {/* Layer 1: Repaired Wooden & Gold Slot Cabinet with Clean Vertical Dividers & Side Lanterns */}
       <img
         src={GAME_ASSETS.panels.slotMachineOuterFrame}
