@@ -23,7 +23,7 @@ export const MISSIONS: MissionDefinition[] = [
   {
     id: 'win-3',
     title: 'Happy Customers',
-    description: 'Land 3 winning combinations on any payline.',
+    description: 'Score 3 winning spins (any payline or bonus win).',
     target: 3,
     rewardGold: 750,
     rewardGems: 8,

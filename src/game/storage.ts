@@ -40,6 +40,8 @@ export interface GameSaveData {
   };
 }
 
+const BACKUP_KEY = 'lucky_shop_save_backup_v1';
+
 export function createInitialSaveData(now = Date.now()): GameSaveData {
   return {
     schemaVersion: SAVE_SCHEMA_VERSION,
@@ -52,7 +54,6 @@ export function createInitialSaveData(now = Date.now()): GameSaveData {
     royalModeEnabled: false,
     lastGrid: INITIAL_DISPLAY_GRID.map((col) => [...col]),
     lastWin: 0,
-    // Ready to claim immediately or shows realistic countdown once claimed
     nextDailyBonusAt: now,
     claimedMissionIds: [],
     stats: {
@@ -79,13 +80,31 @@ export function loadGameSave(now = Date.now()): GameSaveData {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return createInitialSaveData(now);
 
+    // Keep an untouched raw backup before processing
+    try {
+      if (!window.localStorage.getItem(BACKUP_KEY)) {
+        window.localStorage.setItem(BACKUP_KEY, raw);
+      }
+    } catch {
+      // ignore backup quota issues
+    }
+
     const parsed = JSON.parse(raw) as Partial<GameSaveData>;
-    if (parsed.schemaVersion !== SAVE_SCHEMA_VERSION) {
-      // Safe fallback without silently corrupting if future schema differs
+    if (!parsed || typeof parsed !== 'object') {
+      return createInitialSaveData(now);
+    }
+
+    // If future unknown schema, do not overwrite; return fallback
+    if (typeof parsed.schemaVersion === 'number' && parsed.schemaVersion > SAVE_SCHEMA_VERSION) {
       return createInitialSaveData(now);
     }
 
     const base = createInitialSaveData(now);
+    const validBet =
+      typeof parsed.bet === 'number' && [25, 50, 100, 200, 500, 1000].includes(parsed.bet)
+        ? parsed.bet
+        : base.bet;
+
     return {
       ...base,
       ...parsed,
@@ -97,6 +116,8 @@ export function loadGameSave(now = Date.now()): GameSaveData {
         typeof parsed.shopLevel === 'number' && parsed.shopLevel >= 1
           ? Math.floor(parsed.shopLevel)
           : base.shopLevel,
+      bet: validBet,
+      royalModeEnabled: typeof parsed.royalModeEnabled === 'boolean' ? parsed.royalModeEnabled : base.royalModeEnabled,
       lastGrid:
         Array.isArray(parsed.lastGrid) &&
         parsed.lastGrid.length === 5 &&
@@ -104,12 +125,16 @@ export function loadGameSave(now = Date.now()): GameSaveData {
           ? parsed.lastGrid
           : base.lastGrid,
       stats: {
-        ...base.stats,
-        ...(parsed.stats ?? {}),
+        totalSpins: typeof parsed.stats?.totalSpins === 'number' && parsed.stats.totalSpins >= 0 ? Math.floor(parsed.stats.totalSpins) : base.stats.totalSpins,
+        winningSpins: typeof parsed.stats?.winningSpins === 'number' && parsed.stats.winningSpins >= 0 ? Math.floor(parsed.stats.winningSpins) : base.stats.winningSpins,
+        shopUpgrades: typeof parsed.stats?.shopUpgrades === 'number' && parsed.stats.shopUpgrades >= 0 ? Math.floor(parsed.stats.shopUpgrades) : base.stats.shopUpgrades,
+        bigWins: typeof parsed.stats?.bigWins === 'number' && parsed.stats.bigWins >= 0 ? Math.floor(parsed.stats.bigWins) : base.stats.bigWins,
+        biggestSingleWin: typeof parsed.stats?.biggestSingleWin === 'number' && parsed.stats.biggestSingleWin >= 0 ? Math.floor(parsed.stats.biggestSingleWin) : base.stats.biggestSingleWin,
+        totalGoldWon: typeof parsed.stats?.totalGoldWon === 'number' && parsed.stats.totalGoldWon >= 0 ? Math.floor(parsed.stats.totalGoldWon) : base.stats.totalGoldWon,
       },
       settings: {
-        ...base.settings,
-        ...(parsed.settings ?? {}),
+        soundEnabled: typeof parsed.settings?.soundEnabled === 'boolean' ? parsed.settings.soundEnabled : base.settings.soundEnabled,
+        reducedMotionOverride: typeof parsed.settings?.reducedMotionOverride === 'boolean' ? parsed.settings.reducedMotionOverride : base.settings.reducedMotionOverride,
       },
       claimedMissionIds: Array.isArray(parsed.claimedMissionIds) ? parsed.claimedMissionIds : [],
       recentSpins: Array.isArray(parsed.recentSpins) ? parsed.recentSpins.slice(0, 15) : [],
@@ -122,7 +147,10 @@ export function loadGameSave(now = Date.now()): GameSaveData {
 export function saveGameData(data: GameSaveData): void {
   try {
     if (typeof window === 'undefined' || !window.localStorage) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const raw = JSON.stringify(data);
+    window.localStorage.setItem(STORAGE_KEY, raw);
+    // Periodically update the backup on valid save writes
+    window.localStorage.setItem(BACKUP_KEY, raw);
   } catch {
     // Ignore storage quota errors so gameplay never locks up
   }

@@ -164,7 +164,6 @@ export function evaluateGridOutcome(
     if (matchCount >= 3) {
       const countKey = Math.min(5, matchCount) as 3 | 4 | 5;
       const multiplier = SYMBOLS[anchorSymbol].payouts[countKey];
-      const payout = Math.max(1, Math.round(bet * multiplier));
       const positions: Array<[number, number]> = [];
       for (let col = 0; col < countKey; col++) {
         const row = line.rows[col];
@@ -178,11 +177,31 @@ export function evaluateGridOutcome(
         symbolId: anchorSymbol,
         count: countKey,
         multiplier,
-        payout,
+        payout: 0, // Assigned proportionally after aggregate calculation
         color: line.color,
         positions,
       });
     }
+  }
+
+  // Aggregate line payouts integer-safely across all 9 paylines:
+  // Math.round((bet * totalWinningMultiplier) / 9)
+  const totalLineMultiplier = paylineWins.reduce((sum, w) => sum + w.multiplier, 0);
+  const totalLinePayout =
+    paylineWins.length > 0 ? Math.round((bet * totalLineMultiplier) / 9) : 0;
+
+  // Distribute line payouts proportionally for display/feedback
+  if (totalLinePayout > 0 && totalLineMultiplier > 0) {
+    let allocated = 0;
+    paylineWins.forEach((pw, idx) => {
+      if (idx === paylineWins.length - 1) {
+        pw.payout = Math.max(0, totalLinePayout - allocated);
+      } else {
+        const share = Math.round((totalLinePayout * pw.multiplier) / totalLineMultiplier);
+        pw.payout = share;
+        allocated += share;
+      }
+    });
   }
 
   const chestPositions: Array<[number, number]> = [];
@@ -198,7 +217,8 @@ export function evaluateGridOutcome(
   if (chestPositions.length >= 3) {
     const countKey = Math.min(5, chestPositions.length) as 3 | 4 | 5;
     const multiplier = SYMBOLS.chest.payouts[countKey];
-    const payout = Math.max(1, Math.round(bet * multiplier));
+    // Scatter is evaluated across total bet independently of line allocations
+    const payout = Math.round(bet * multiplier);
     chestPositions.forEach(([c, r]) => winningCells.add(`${c}-${r}`));
     scatterWin = {
       symbolId: 'chest',
@@ -209,8 +229,7 @@ export function evaluateGridOutcome(
     };
   }
 
-  const baseWin =
-    paylineWins.reduce((sum, w) => sum + w.payout, 0) + (scatterWin ? scatterWin.payout : 0);
+  const baseWin = totalLinePayout + (scatterWin ? scatterWin.payout : 0);
 
   const shopBonusGold =
     baseWin > 0 && shopWinBonusPct > 0 ? Math.round((baseWin * shopWinBonusPct) / 100) : 0;

@@ -224,20 +224,29 @@ export function App() {
     setFeedbackBanner(`Shop upgraded to Lv. ${save.shopLevel + 1}!`);
   };
 
+  const [isClaimingBonus, setIsClaimingBonus] = useState(false);
+
   const handleClaimDailyBonus = () => {
-    if (!dailyBonusReady) return;
-    soundFx.playUpgrade();
+    if (isClaimingBonus) return;
     const now = Date.now();
+    if (save.nextDailyBonusAt > now) return;
+
+    setIsClaimingBonus(true);
+    soundFx.playUpgrade();
     setNowMs(now);
-    setSave((prev) => ({
-      ...prev,
-      gold: prev.gold + currentShop.dailyBonusGold,
-      gems: prev.gems + currentShop.dailyBonusGems,
-      nextDailyBonusAt: now + DAILY_BONUS_COOLDOWN_MS,
-    }));
+    setSave((prev) => {
+      if (prev.nextDailyBonusAt > now) return prev;
+      return {
+        ...prev,
+        gold: prev.gold + currentShop.dailyBonusGold,
+        gems: prev.gems + currentShop.dailyBonusGems,
+        nextDailyBonusAt: now + DAILY_BONUS_COOLDOWN_MS,
+      };
+    });
     setFeedbackBanner(
       `Daily Bonus: +${currentShop.dailyBonusGold.toLocaleString()} Gold & +${currentShop.dailyBonusGems} Gems!`,
     );
+    setTimeout(() => setIsClaimingBonus(false), 500);
   };
 
   const handleExchangeGems = (gemsCost: number, goldGranted: number) => {
@@ -751,24 +760,28 @@ export function App() {
               className="relative aspect-[2116/921] w-full transition-transform active:scale-97"
             >
               <img
-                src={GAME_ASSETS.panels.lockLevelCard}
+                src={
+                  save.level < UNLOCK_ROYAL_SLOTS_LEVEL
+                    ? GAME_ASSETS.panels.lockLevelCard
+                    : GAME_ASSETS.panels.parchment
+                }
                 alt="Slot Unlock Status"
                 referrerPolicy="no-referrer"
                 draggable={false}
                 className="h-full w-full object-contain drop-shadow-[0_6px_10px_rgba(12,4,18,0.65)]"
               />
-              <div className="pointer-events-none absolute inset-y-0 left-[30%] right-[7%] flex flex-col items-center justify-center text-center leading-tight">
+              <div className="pointer-events-none absolute inset-y-0 left-[10%] right-[10%] flex flex-col items-center justify-center text-center leading-tight">
                 {save.level < UNLOCK_ROYAL_SLOTS_LEVEL ? (
                   <span className="text-[10.5px] sm:text-[11.5px] font-extrabold text-[#47210b]">
                     Reach Level {UNLOCK_ROYAL_SLOTS_LEVEL} to unlock new slots!
                   </span>
                 ) : (
                   <>
-                    <span className="font-display text-[12px] font-bold text-[#3f1907]">
-                      Royal Slots
+                    <span className="font-display text-[12px] sm:text-[13px] font-bold text-[#3f1907]">
+                      👑 Royal Slots
                     </span>
-                    <span className="text-[10px] font-extrabold text-emerald-800">
-                      {save.royalModeEnabled ? 'Active · Tap to Toggle' : 'Unlocked · Tap On'}
+                    <span className="text-[10px] font-extrabold text-purple-900 mt-0.5">
+                      {save.royalModeEnabled ? '✨ Active · Tap to Toggle' : 'Unlocked · Tap On'}
                     </span>
                   </>
                 )}
@@ -933,6 +946,7 @@ export function App() {
         reducedMotionOverride={save.settings.reducedMotionOverride}
         confirmReset={confirmReset}
         setConfirmReset={setConfirmReset}
+        isSpinning={isSpinning}
         onUpgradeShop={handleUpgradeShop}
         onClaimDailyBonus={handleClaimDailyBonus}
         onExchangeGems={handleExchangeGems}
@@ -953,6 +967,7 @@ export function App() {
           }))
         }
         onResetSave={() => {
+          if (isSpinning) return;
           const fresh = resetGameSave();
           setSave(fresh);
           setLastOutcome(null);

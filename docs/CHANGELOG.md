@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.0] - 2026-11-04
+### Added
+- **Monte Carlo Economy Simulation (`src/game/__tests__/simulation.test.ts`)**: 100,000 spin simulation test validating Normal Mode balanced RTP (~39.8%, 26.8% hit frequency) and Royal Mode rewarding upside (~56.5% RTP, 45.2% hit frequency with Crown Wilds active).
+- **Player Save Safe Backup (`src/game/storage.ts`)**: Raw serialized backup snapshot (`lucky_shop_save_backup_v1`) preserved before any migration, plus non-destructive fallback preventing progress wipe on future or malformed schema reads.
+
+### Fixed
+- **Payline Stake Allocation (`src/game/slotEngine.ts`)**: Implemented aggregate multiplier summing and integer-safe total BET allocation across 9 paylines (`Math.round((bet * totalMultiplier) / 9)`), eliminating multiplier inflation and preserving deterministic integer arithmetic.
+- **Independent Chest Scatter & Diamond Stacking (`src/game/slotEngine.ts`)**: Chest scatter pays total BET multiplier independently of paylines, and simultaneously awards bonus Gems alongside 3+ Diamond bonuses on the same spin.
+- **Daily Bonus Idempotency (`src/App.tsx`)**: Replaced loose state check with synchronous and atomic guard preventing rapid double-claims.
+- **Spin-Lock on Reset Progress (`src/App.tsx`, `src/components/GameModals.tsx`)**: Disabled Reset Progress action and button UI whenever a spin is actively resolving.
+- **Mission Alignment (`src/game/missions.ts`)**: Updated "Happy Customers" wording to "Score 3 winning spins (any payline or bonus win)" to match the `winningSpins` metric accurately.
+- **Royal Slots Unlocked Presentation (`src/App.tsx`)**: Replaced locked padlock artwork with clean parchment panel and golden badge indicator once Player Level 5 Royal Slots is unlocked.
+- **Comprehensive Paytable Explanations (`src/components/GameModals.tsx`)**: Documented Royal Crown Wild rule, Chest Scatter mechanics, and Diamond-to-Gem conversion.
+
 ## [0.3.1] - 2026-11-04
 ### Fixed
 - **Published Site Stale Asset Cache Invalidation (`src/game/assets.ts`, `src/assets/game/**`)**: Migrated all 49 runtime game images out of unhashed `public/assets/*.png` paths (which collided with `/assets/*` immutable CDN/browser caching on published deployments) into high-DPI lossless-alpha `.webp` modules imported through Vite (`src/game/assets.ts`). Production builds now emit content-hashed filenames (`dist/assets/<name>-v3-<hash>.webp`) and reduce asset bundle size from ~29 MB to ~4.5 MB, guaranteeing that published deployments immediately load the repaired slot cabinet dividers, striped awning, single-bar level badge, crisp buttons, and updated symbols without stale browser/CDN cache hits.

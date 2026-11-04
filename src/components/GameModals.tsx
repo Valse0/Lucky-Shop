@@ -37,6 +37,7 @@ interface GameModalsProps {
   reducedMotionOverride: boolean;
   confirmReset: boolean;
   setConfirmReset: (v: boolean) => void;
+  isSpinning: boolean;
   onUpgradeShop: () => void;
   onClaimDailyBonus: () => void;
   onExchangeGems: (gemsCost: number, goldGranted: number) => void;
@@ -62,6 +63,7 @@ export const GameModals: React.FC<GameModalsProps> = ({
   reducedMotionOverride,
   confirmReset,
   setConfirmReset,
+  isSpinning,
   onUpgradeShop,
   onClaimDailyBonus,
   onExchangeGems,
@@ -329,14 +331,18 @@ export const GameModals: React.FC<GameModalsProps> = ({
                 </div>
                 <p className="mt-1 text-xs text-[#5c2d0c]">
                   {level >= UNLOCK_ROYAL_SLOTS_LEVEL
-                    ? 'Unlocked! Rainbow Wild, Sunburst Jackpot, Dragon Egg, and Mystic Orb symbols can now join your reels.'
-                    : `Reach Level ${UNLOCK_ROYAL_SLOTS_LEVEL} (currently Level ${level}) to unlock Rainbow Wild, Sunburst Jackpot, Dragon Egg, and Mystic Orb symbols!`}
+                    ? 'Unlocked! In Royal Mode, Royal Crown acts as Wild (substitutes on any payline). Rainbow Wild, Sunburst Jackpot, Dragon Egg, and Mystic Orb symbols join the reels with increased upside.'
+                    : `Reach Level ${UNLOCK_ROYAL_SLOTS_LEVEL} (currently Level ${level}) to unlock Royal Mode! When active, Royal Crown becomes Wild and exclusive high-tier symbols join your reels.`}
                 </p>
+                <div className="mt-2.5 border-t border-[#7c3f12]/20 pt-2 text-xs text-[#5c2d0c]">
+                  <div><strong>Chest Scatter:</strong> 3+ chests anywhere on the grid pay total BET multiplier and award bonus Gems.</div>
+                  <div className="mt-0.5"><strong>Sky Diamond:</strong> 3+ diamonds anywhere grant bonus Gems (3=2, 4=3, 5=4 Gems). Chest & Diamond rewards can trigger together on the same spin.</div>
+                </div>
               </div>
 
               <div>
                 <h3 className="font-display mb-2 text-sm font-bold text-amber-200">
-                  Symbol Paytable (Multipliers of Bet)
+                  Symbol Paytable (Multipliers of Total Bet across 9 Lines)
                 </h3>
                 <div className="grid grid-cols-1 gap-2">
                   {[...SYMBOL_LIST].reverse().map((sym) => (
@@ -498,17 +504,19 @@ export const GameModals: React.FC<GameModalsProps> = ({
                 {!confirmReset ? (
                   <button
                     type="button"
+                    disabled={isSpinning}
                     onClick={() => setConfirmReset(true)}
-                    className="mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-rose-300/50 bg-rose-900/70 px-4 py-2 text-xs font-bold text-rose-100 active:scale-95"
+                    className="mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-rose-300/50 bg-rose-900/70 px-4 py-2 text-xs font-bold text-rose-100 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    <RotateCcw className="h-4 w-4" /> Reset Progress
+                    <RotateCcw className="h-4 w-4" /> {isSpinning ? 'Spinning...' : 'Reset Progress'}
                   </button>
                 ) : (
                   <div className="mt-3 flex items-center gap-2">
                     <button
                       type="button"
+                      disabled={isSpinning}
                       onClick={onResetSave}
-                      className="min-h-[44px] rounded-xl bg-rose-600 px-4 py-2 text-xs font-bold text-white active:scale-95"
+                      className="min-h-[44px] rounded-xl bg-rose-600 px-4 py-2 text-xs font-bold text-white active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       Confirm Reset
                     </button>
