@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@import "./slot/slotMotion.css";
+
+@layer base {
+  :root {
+    --font-display: "Fredoka", system-ui, -apple-system, sans-serif;
+    --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    background-color: #1c102b;
+  }
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Crisp dark brown/plum game-label outline matching Referans UI.PNG */
+.ls-label-outline {
+  text-shadow:
+    0 1.5px 0 #2b1004,
+    0 -1px 0 #2b1004,
+    1.5px 0 0 #2b1004,
+    -1.5px 0 0 #2b1004,
+    0 3px 4px rgba(14, 4, 2, 0.72);
+}
+
+.ls-purple-outline {
+  text-shadow:
+    0 2px 0 #310a4d,
+    0 -1px 0 #310a4d,
+    1.5px 0 0 #310a4d,
+    -1.5px 0 0 #310a4d,
+    0 3px 5px rgba(16, 4, 30, 0.75);
+}
+
+/* 3D Golden-Cream Title inside lucky-shop-title.png */
+.ls-brand-word {
+  font-family: var(--font-display);
+  color: #ffe678;
+  -webkit-text-stroke: 2.2px #43103b;
+  paint-order: stroke fill;
+  text-shadow:
+    0 3px 0 #3a0b33,
+    0 5px 8px rgba(18, 4, 28, 0.8);
+}
+
+/* 3D Golden SPIN label inside spin-button.png */
+.ls-spin-word {
+  font-family: var(--font-display);
+  color: #ffe84d;
+  -webkit-text-stroke: 2.4px #451554;
+  paint-order: stroke fill;
+  text-shadow:
+    0 3px 0 #2e093b,
+    0 5px 8px rgba(15, 3, 25, 0.75);
+}
+
+/* Companion wood/parchment styling for modals & desktop panels */
+.ls-wood-panel {
+  background: linear-gradient(180deg, #8b4c24 0%, #683516 52%, #4c240d 100%);
+  border: 2.5px solid #e7a93c;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 232, 163, 0.45),
+    inset 0 -3px 0 rgba(36, 14, 4, 0.7),
+    0 8px 18px rgba(17, 7, 28, 0.6);
+}
+
+.ls-parchment-card {
+  background: linear-gradient(180deg, #f6dfb7 0%, #e6c38c 100%);
+  border: 2.5px solid #8c5327;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 250, 235, 0.75),
+    inset 0 -2px 0 rgba(120, 68, 26, 0.35),
+    0 5px 12px rgba(24, 10, 5, 0.45);
+}
+
+@keyframes ls-win-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.ls-symbol-win {
+  animation: ls-win-pulse 680ms ease-in-out infinite;
+}
+
+@keyframes ls-sparkle-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.45) rotate(-12deg);
+  }
+  45% {
+    opacity: 0.95;
+    transform: scale(1.05) rotate(6deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.25) rotate(16deg);
+  }
+}
+
+.ls-reel-sparkle {
+  animation: ls-sparkle-pop 340ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ls-symbol-win,
+  .ls-reel-sparkle {
+    animation: none;
+  }
+}

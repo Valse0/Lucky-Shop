@@ -1,0 +1,33 @@
+/* Apply to the moving inner strip inside each clipped reel viewport. */
+.slot-reel-viewport {
+  overflow: hidden;
+  position: relative;
+  contain: paint;
+}
+
+.slot-reel-track {
+  display: flex;
+  flex-direction: column;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Each symbol cell must have identical height for predictable offsets. */
+.slot-reel-symbol {
+  flex: 0 0 var(--slot-symbol-height);
+  height: var(--slot-symbol-height);
+  display: grid;
+  place-items: center;
+}
+
+/* Optional stop bounce. Trigger this class only after a reel stops. */
+@keyframes slot-reel-settle {
+  0% { transform: translateY(-3px); }
+  55% { transform: translateY(1px); }
+  100% { transform: translateY(0); }
+}
+
+.slot-reel-track.is-settling {
+  animation: slot-reel-settle 150ms ease-out;
+}
