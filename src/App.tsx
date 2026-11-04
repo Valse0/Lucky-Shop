@@ -415,14 +415,14 @@ export function App() {
                 type="button"
                 onClick={() => openModal('treasury')}
                 aria-label="Exchange Gems for Gold"
-                className="absolute -right-1.5 flex h-11 w-11 items-center justify-center transition-transform active:scale-92"
+                className="absolute -right-2 flex h-11 w-11 items-center justify-center transition-transform active:scale-92"
               >
                 <img
                   src="/assets/ui/top-plus-button.png"
                   alt=""
                   referrerPolicy="no-referrer"
                   draggable={false}
-                  className="h-9 w-9 object-contain drop-shadow"
+                  className="h-9.5 w-9.5 object-contain"
                 />
               </button>
             </div>
@@ -451,14 +451,14 @@ export function App() {
                 type="button"
                 onClick={() => openModal('daily')}
                 aria-label="Daily Bonus and Gems"
-                className="absolute -right-1.5 flex h-11 w-11 items-center justify-center transition-transform active:scale-92"
+                className="absolute -right-2 flex h-11 w-11 items-center justify-center transition-transform active:scale-92"
               >
                 <img
                   src="/assets/ui/top-plus-button.png"
                   alt=""
                   referrerPolicy="no-referrer"
                   draggable={false}
-                  className="h-9 w-9 object-contain drop-shadow"
+                  className="h-9.5 w-9.5 object-contain"
                 />
               </button>
             </div>
@@ -475,7 +475,7 @@ export function App() {
                 alt=""
                 referrerPolicy="no-referrer"
                 draggable={false}
-                className="h-10 w-10 object-contain drop-shadow"
+                className="h-10.5 w-10.5 object-contain"
               />
             </button>
           </header>
@@ -514,14 +514,14 @@ export function App() {
                 <span className="font-num absolute top-[28%] inset-x-0 text-center text-[22px] leading-none font-bold text-white ls-label-outline">
                   {save.level}
                 </span>
-                {/* Dynamic XP Bar overlaid cleanly over the shield's carved bar slot */}
-                <div className="absolute top-[58.2%] left-[15.5%] h-[8.5%] w-[69%] overflow-hidden rounded-full bg-[#361605]">
+                {/* Dynamic Single XP Bar fitted cleanly inside the shield's cleaned dark groove */}
+                <div className="absolute top-[55.6%] left-[14.2%] h-[7.2%] w-[71.6%] overflow-hidden rounded-full">
                   <div
-                    className="h-full rounded-full bg-gradient-to-b from-[#fef08a] via-[#facc15] to-[#d97706]"
+                    className="h-full rounded-full bg-gradient-to-b from-[#fef08a] via-[#facc15] to-[#d97706] shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]"
                     style={{ width: `${xpPct}%` }}
                   />
                 </div>
-                <span className="font-num absolute bottom-[16%] inset-x-0 text-center text-[10px] leading-none font-bold text-white ls-label-outline">
+                <span className="font-num absolute bottom-[21.5%] inset-x-0 text-center text-[10px] leading-none font-bold text-white ls-label-outline">
                   {save.xp} / {xpRequired}
                 </span>
               </button>
@@ -665,7 +665,10 @@ export function App() {
                 type="button"
                 disabled={isSpinning}
                 onClick={handleSpin}
-                className="relative -my-5 flex aspect-[1923/1024] w-[138px] sm:w-[148px] items-center justify-center transition-transform active:scale-95 disabled:cursor-not-allowed disabled:opacity-80"
+                aria-label="Spin Slot Reels"
+                className={`relative -my-5 flex aspect-[1923/1024] w-[140px] sm:w-[150px] items-center justify-center transition-transform active:scale-95 disabled:cursor-not-allowed ${
+                  isSpinning ? 'scale-[0.97] brightness-95' : ''
+                }`}
               >
                 <img
                   src="/assets/ui/spin-button.png"
@@ -675,7 +678,7 @@ export function App() {
                   className="pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_6px_12px_rgba(14,4,26,0.75)]"
                 />
                 <span className="ls-spin-word relative z-10 text-[29px] sm:text-[31px] font-bold tracking-wider">
-                  {isSpinning ? '...' : 'SPIN'}
+                  SPIN
                 </span>
               </button>
 

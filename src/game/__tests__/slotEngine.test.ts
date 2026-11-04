@@ -6,6 +6,7 @@ import {
   evaluateGridOutcome,
   validateSpin,
 } from '../slotEngine';
+import { buildTopToBottomReelStrip } from '../../slot/slotMotion';
 
 describe('Lucky Shop 5x3 Slot Engine', () => {
   it('blocks spins when already spinning or when balance is below bet', () => {
@@ -68,5 +69,15 @@ describe('Lucky Shop 5x3 Slot Engine', () => {
     expect(progress.xp).toBe(30);
     expect(progress.leveledUpCount).toBe(1);
     expect(progress.rewardGold).toBeGreaterThan(0);
+  });
+
+  it('places target outcome at top [0..2] and previous idle symbols at bottom [S..S+2] for top-to-bottom spins', () => {
+    const startCol: SymbolId[] = ['cherry', 'crown', 'diamond'];
+    const filler: SymbolId[] = ['bell', 'clover', 'grapes', 'watermelon'];
+    const targetCol: SymbolId[] = ['seven', 'seven', 'seven'];
+    const strip = buildTopToBottomReelStrip(startCol, filler, targetCol);
+    const stepCount = 3 + filler.length; // 7 steps
+    expect(strip.slice(0, 3)).toEqual(targetCol);
+    expect(strip.slice(stepCount, stepCount + 3)).toEqual(startCol);
   });
 });

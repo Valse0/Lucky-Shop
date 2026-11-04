@@ -2,7 +2,6 @@
 .slot-reel-viewport {
   overflow: hidden;
   position: relative;
-  contain: paint;
 }
 
 .slot-reel-track {
@@ -10,7 +9,6 @@
   flex-direction: column;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
-  will-change: transform;
 }
 
 /* Each symbol cell must have identical height for predictable offsets. */

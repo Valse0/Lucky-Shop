@@ -17,15 +17,19 @@ export interface ReelMotionTarget {
   track: HTMLElement;
   /** Total downward-strip travel, in px; use a positive number. */
   travelDistancePx: number;
-  /** Final positive offset from the top of the strip, in px. */
+  /** Final positive offset from the top of the strip, in px (0 when target outcome sits at top of strip). */
   finalOffsetPx: number;
+  /** Direction of symbol motion inside the reel window. Default: 'down' (top-to-bottom). */
+  direction?: "down" | "up";
 }
 
 export interface SlotMotionOptions {
-  /** Base time for the first reel. Default: 1750ms. */
+  /** Base time for the first reel. Default: 940ms. */
   baseDurationMs?: number;
-  /** Additional stop delay per reel. Default: 260ms. */
+  /** Additional stop delay per reel. Default: 195ms. */
   stopGapMs?: number;
+  /** Optional stagger before each reel starts moving (ms). Default: 35ms. */
+  startStaggerMs?: number;
   /** CSS easing. */
   easing?: string;
   /** Called after each reel has settled, from left to right. */
@@ -44,35 +48,56 @@ export class SlotSpinCancelledError extends Error {
 }
 
 const DEFAULTS = {
-  baseDurationMs: 1750,
-  stopGapMs: 260,
-  easing: "cubic-bezier(0.12, 0.72, 0.18, 1)",
+  baseDurationMs: 760,
+  stopGapMs: 175,
+  startStaggerMs: 25,
 } as const;
 
-function wait(ms: number, signal?: AbortSignal): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (signal?.aborted) {
-      reject(new SlotSpinCancelledError());
-      return;
-    }
+/**
+ * Pure strip builder for top-to-bottom sequential reel spins.
+ * Places `targetOutcomeCol` at indices [0..2] (y = 0px) and `startVisibleCol`
+ * at the bottom of the strip (y = -stepCount * cellHeight), so animating
+ * translateY from `-stepCount * cellHeight` -> `0px` scrolls symbols rapidly
+ * from TOP to BOTTOM with zero visual jump at start or stop.
+ */
+export function buildTopToBottomReelStrip<T>(
+  startVisibleCol: readonly T[],
+  fillerSymbols: readonly T[],
+  targetOutcomeCol: readonly T[],
+): T[] {
+  return [...targetOutcomeCol, ...fillerSymbols, ...startVisibleCol];
+}
 
-    const timer = window.setTimeout(() => {
-      signal?.removeEventListener("abort", onAbort);
-      resolve();
-    }, ms);
+function computeReelOffsetY(
+  progress: number,
+  startY: number,
+  endY: number,
+  overshootPx: number,
+): number {
+  if (progress <= 0) return startY;
+  if (progress >= 1) return endY;
 
-    const onAbort = () => {
-      window.clearTimeout(timer);
-      signal?.removeEventListener("abort", onAbort);
-      reject(new SlotSpinCancelledError());
-    };
+  if (overshootPx === 0) {
+    const eased = 1 - Math.pow(1 - progress, 2.25);
+    return startY + (endY - startY) * eased;
+  }
 
-    signal?.addEventListener("abort", onAbort, { once: true });
-  });
+  const settleStart = 0.9;
+  if (progress <= settleStart) {
+    const u = progress / settleStart;
+    const eased = 1 - Math.pow(1 - u, 2.25);
+    const targetWithOvershoot = endY + overshootPx;
+    return startY + (targetWithOvershoot - startY) * eased;
+  }
+
+  const v = (progress - settleStart) / (1 - settleStart);
+  const smoothStep = v * v * (3 - 2 * v);
+  return endY + overshootPx * (1 - smoothStep);
 }
 
 /**
- * Animates five reel tracks. All tracks start together and stop sequentially.
+ * Animates five reel tracks. Reels cascade rapidly from TOP to BOTTOM
+ * and lock sequentially from left (Reel 0) to right (Reel 4).
  * Reduced-motion preference shortens the movement while preserving stop order.
  */
 export async function animateSlotReels(
@@ -86,78 +111,120 @@ export async function animateSlotReels(
   const {
     baseDurationMs = DEFAULTS.baseDurationMs,
     stopGapMs = DEFAULTS.stopGapMs,
-    easing = DEFAULTS.easing,
+    startStaggerMs = DEFAULTS.startStaggerMs,
     onReelStop,
     onComplete,
     signal,
   } = options;
 
-  if (reels.some((reel) =>
-    !Number.isFinite(reel.travelDistancePx) ||
-    !Number.isFinite(reel.finalOffsetPx) ||
-    reel.travelDistancePx < 0 ||
-    reel.finalOffsetPx < 0
-  )) {
+  if (
+    reels.some(
+      (reel) =>
+        !Number.isFinite(reel.travelDistancePx) ||
+        !Number.isFinite(reel.finalOffsetPx) ||
+        reel.travelDistancePx < 0 ||
+        reel.finalOffsetPx < 0,
+    )
+  ) {
     throw new Error("Reel travel and final offsets must be finite non-negative numbers.");
   }
 
   if (signal?.aborted) throw new SlotSpinCancelledError();
 
-  const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-  const animations: Animation[] = [];
+  const reducedMotion =
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
-  try {
-    // Create all animations immediately so all five reels begin together.
-    const tasks = reels.map(async (reel, index) => {
-      const duration = reducedMotion
-        ? Math.max(350, Math.round(baseDurationMs * 0.45))
-        : baseDurationMs + index * stopGapMs;
+  const states = reels.map((reel, index) => {
+    const duration = reducedMotion
+      ? Math.max(300, Math.round(baseDurationMs * 0.45) + index * 65)
+      : baseDurationMs + index * stopGapMs;
+    const delay = reducedMotion ? 0 : index * startStaggerMs;
+    const dir = reel.direction ?? "down";
+    const endY = -reel.finalOffsetPx;
+    const startY = dir === "down" ? endY - reel.travelDistancePx : 0;
+    const overshootPx = reducedMotion ? 0 : dir === "down" ? 5 : -4;
 
-      const travel = reducedMotion
-        ? Math.min(reel.travelDistancePx, Math.max(reel.finalOffsetPx, 1) * 2)
-        : reel.travelDistancePx;
+    reel.track.style.transform = `translate3d(0, ${startY}px, 0)`;
 
-      const animation = reel.track.animate(
-        [
-          { transform: "translate3d(0, 0, 0)", offset: 0 },
-          { transform: `translate3d(0, ${-travel * 0.72}px, 0)`, offset: 0.72 },
-          { transform: `translate3d(0, ${-travel}px, 0)`, offset: 1 },
-        ],
-        {
-          duration,
-          easing,
-          fill: "forwards",
-        },
-      );
+    return {
+      reel,
+      index,
+      duration,
+      delay,
+      startY,
+      endY,
+      overshootPx,
+      stopped: false,
+    };
+  });
 
-      animations[index] = animation;
+  await new Promise<void>((resolve, reject) => {
+    let rafId = 0;
+    const originTime = performance.now();
 
-      const abortPromise = signal
-        ? new Promise<never>((_, reject) => {
-            if (signal.aborted) reject(new SlotSpinCancelledError());
-            else signal.addEventListener(
-              "abort",
-              () => reject(new SlotSpinCancelledError()),
-              { once: true },
-            );
-          })
-        : new Promise<never>(() => { /* never settles without an AbortSignal */ });
+    const onAbort = () => {
+      window.cancelAnimationFrame(rafId);
+      reject(new SlotSpinCancelledError());
+    };
 
-      await Promise.race([animation.finished, abortPromise]);
+    if (signal) {
+      if (signal.aborted) {
+        onAbort();
+        return;
+      }
+      signal.addEventListener("abort", onAbort, { once: true });
+    }
 
-      // Commit the exact final position before removing the Web Animation.
-      reel.track.style.transform = `translate3d(0, ${-reel.finalOffsetPx}px, 0)`;
-      animation.cancel();
+    const tick = (now: number) => {
+      if (signal?.aborted) {
+        onAbort();
+        return;
+      }
 
-      onReelStop?.(index);
-    });
+      const elapsed = now - originTime;
+      let allStopped = true;
 
-    await Promise.all(tasks);
-    onComplete?.();
-  } catch (error) {
-    animations.forEach((animation) => animation?.cancel());
-    if (error instanceof SlotSpinCancelledError) throw error;
-    if (signal?.aborted) throw new SlotSpinCancelledError();
-    throw error;
-  }
+      for (let i = 0; i < states.length; i += 1) {
+        const st = states[i];
+        if (st.stopped) continue;
+
+        if (elapsed < st.delay) {
+          allStopped = false;
+          continue;
+        }
+
+        const localElapsed = elapsed - st.delay;
+        const progress = Math.min(1, localElapsed / st.duration);
+        const y = computeReelOffsetY(
+          progress,
+          st.startY,
+          st.endY,
+          st.overshootPx,
+        );
+        st.reel.track.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
+
+        if (progress >= 1) {
+          st.reel.track.style.transform = `translate3d(0, ${st.endY}px, 0)`;
+          st.stopped = true;
+          onReelStop?.(st.index);
+        } else {
+          allStopped = false;
+        }
+      }
+
+      if (allStopped) {
+        if (signal) {
+          signal.removeEventListener("abort", onAbort);
+        }
+        resolve();
+        return;
+      }
+
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    rafId = window.requestAnimationFrame(tick);
+  });
+
+  onComplete?.();
 }

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0] - 2026-11-04
+### Fixed
+- **Slot Cabinet Vertical Dividers & Inner Walls (`public/assets/panels/slot-machine-outer-frame.png`)**: Eliminated all 12 inpainting notches/scars along the 4 vertical reel dividers and inner left/right golden walls, smoothed the 5 cream reel wells, and restored the bottom-right golden scroll corner.
+- **Shop Roof Striped Awning (`public/assets/ui/shop-roof-awning.png`)**: Repaired the 4 transparent stripe holes where the cream stripes had `alpha = 0`, reconstructed the sloped 3D red-and-cream striped roof canopy (`2048x318`), and trimmed duplicate string lights.
+- **Level Shield XP Groove (`public/assets/panels/level-badge.png`)**: Removed the baked yellow progress bar fill inside the carved dark-wood groove so only a single dynamic XP progress bar renders, and raised the `XP / Max` readout cleanly above the bottom rim.
+- **Top Bar Buttons & Bet/Win Wells (`top-plus-button.png`, `settings-button.png`, `win-panel.png`)**: Replaced low-resolution cut-off button crops (`66x88`, `83x100`) and the bottom-right notched `win-panel.png` (`249x94`) with crisp high-DPI anti-aliased RGBA PNGs (`256x256` and `520x196`).
+
+### Changed
+- **Reference-Matched Slot Symbols (`seven`, `cherry`, `bell`, `grapes`, `crown` + de-haloed `clover`, `watermelon`, `diamond`)**: Upgraded the 3D gold-beveled crimson `7`, upright twin cherries, upright golden bell, royal purple grapes, and ruby-set golden crown (`512x512` RGBA, ~86% fill, zero white matte halo).
+- **Top-to-Bottom Fast Sequential Reel Spin (`src/slot/slotMotion.ts`, `src/slot/slotMotion.css`, `src/components/SlotMachine.tsx`)**: Reversed reel motion from upward to rapid **top-to-bottom** scrolling (`-travel -> 0px`) driven by `requestAnimationFrame` with pre-decoded symbol images, synchronous pre-paint layout offsets, snappy sequential left-to-right stopping (`baseDurationMs: 760`, `stopGapMs: 175`), downward mechanical settle bounce, persistent `SPIN` button label, and subtle warm settle highlights.
+
 ## [0.2.0] - 2026-11-04
 ### Changed
 - Retrieved and audited both original GitHub asset archives (`assets/LuckyShop-AssetPack-v1.zip` and `assets/slot_assets_clean.zip`) that had been omitted during initial >10 MB repository import.
