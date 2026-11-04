@@ -48,8 +48,62 @@ export function App() {
 
   useEffect(() => {
     saveGameData(save);
-    soundFx.setEnabled(save.settings.soundEnabled);
+    soundFx.setSoundEnabled(save.settings.soundEnabled);
+    soundFx.setSoundVolume(save.settings.soundVolume);
+    soundFx.setMusicEnabled(save.settings.musicEnabled);
+    soundFx.setMusicVolume(save.settings.musicVolume);
   }, [save]);
+
+  const handleToggleSound = () => {
+    soundFx.playClick();
+    setSave((prev) => {
+      const next = !prev.settings.soundEnabled;
+      soundFx.setSoundEnabled(next);
+      return {
+        ...prev,
+        settings: { ...prev.settings, soundEnabled: next },
+      };
+    });
+  };
+
+  const handleChangeSoundVolume = (vol: number) => {
+    soundFx.setSoundVolume(vol);
+    setSave((prev) => ({
+      ...prev,
+      settings: { ...prev.settings, soundVolume: vol },
+    }));
+  };
+
+  const handleToggleMusic = () => {
+    soundFx.playClick();
+    setSave((prev) => {
+      const next = !prev.settings.musicEnabled;
+      soundFx.setMusicEnabled(next);
+      return {
+        ...prev,
+        settings: { ...prev.settings, musicEnabled: next },
+      };
+    });
+  };
+
+  const handleChangeMusicVolume = (vol: number) => {
+    soundFx.setMusicVolume(vol);
+    setSave((prev) => ({
+      ...prev,
+      settings: { ...prev.settings, musicVolume: vol },
+    }));
+  };
+
+  const handleToggleReducedMotion = () => {
+    soundFx.playClick();
+    setSave((prev) => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        reducedMotionOverride: !prev.settings.reducedMotionOverride,
+      },
+    }));
+  };
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -135,12 +189,30 @@ export function App() {
     setIsSpinning(false);
     setLastOutcome(outcome);
 
-    if (outcome.totalWin > 0) {
-      soundFx.playWin(outcome.isBigWin);
+    const xpUpdate = applyXpGain(save.level, save.xp, outcome.xpEarned);
+
+    // Audio priority orchestration:
+    if (xpUpdate.leveledUpCount > 0) {
+      soundFx.playLevelUp();
+    } else if (outcome.totalWin > 0) {
+      soundFx.playWin({
+        totalWin: outcome.totalWin,
+        bet: outcome.bet,
+        isBigWin: outcome.isBigWin,
+      });
+    } else {
+      soundFx.playNoWin();
+    }
+
+    // Special reward chimes (staggered slightly to avoid cacophony)
+    if (outcome.scatterWin) {
+      window.setTimeout(() => soundFx.playTreasureChest(), 240);
+    }
+    if (outcome.gemsFound > 0) {
+      window.setTimeout(() => soundFx.playDiamondBonus(), 360);
     }
 
     setSave((prev) => {
-      const xpUpdate = applyXpGain(prev.level, prev.xp, outcome.xpEarned);
       const nextGold = Math.max(0, prev.gold + outcome.totalWin + xpUpdate.rewardGold);
       const nextGems = Math.max(0, prev.gems + outcome.gemsFound + xpUpdate.rewardGems);
 
@@ -192,6 +264,7 @@ export function App() {
   };
 
   const handleSpinCancelled = () => {
+    soundFx.stopReelSpinningLoop();
     setActiveSpin(null);
     setIsSpinning(false);
     setSave((prev) => ({
@@ -203,7 +276,7 @@ export function App() {
   const handleUpgradeShop = () => {
     const nextShop = SHOP_TIERS[save.shopLevel];
     if (!nextShop || save.gold < nextShop.upgradeCostGold) return;
-    soundFx.playUpgrade();
+    soundFx.playShopUpgrade();
     setSave((prev) => {
       const target = SHOP_TIERS[prev.shopLevel];
       if (!target || prev.gold < target.upgradeCostGold) return prev;
@@ -232,7 +305,7 @@ export function App() {
     if (save.nextDailyBonusAt > now) return;
 
     setIsClaimingBonus(true);
-    soundFx.playUpgrade();
+    soundFx.playDailyBonus();
     setNowMs(now);
     setSave((prev) => {
       if (prev.nextDailyBonusAt > now) return prev;
@@ -251,7 +324,7 @@ export function App() {
 
   const handleExchangeGems = (gemsCost: number, goldGranted: number) => {
     if (save.gems < gemsCost) return;
-    soundFx.playUpgrade();
+    soundFx.playGemReward();
     setSave((prev) => {
       if (prev.gems < gemsCost) return prev;
       return {
@@ -269,7 +342,7 @@ export function App() {
     const progress = getMissionMetricValue(mission.metric, save.stats, save.level);
     if (progress < mission.target) return;
 
-    soundFx.playUpgrade();
+    soundFx.playMissionClaim();
     setSave((prev) => {
       if (prev.claimedMissionIds.includes(missionId)) return prev;
       const xpUpdate = applyXpGain(prev.level, prev.xp, mission.rewardXp);
@@ -612,7 +685,7 @@ export function App() {
                 activeSpin={activeSpin}
                 winningCells={winningCellsSet}
                 reducedMotionOverride={save.settings.reducedMotionOverride}
-                onReelStop={(reelIdx) => soundFx.playReelStop(reelIdx)}
+                onReelStop={(reelIdx) => soundFx.playReelStop(reelIdx, reelIdx === 4)}
                 onSpinAnimationDone={handleSpinAnimationDone}
                 onSpinCancelled={handleSpinCancelled}
               />
@@ -750,11 +823,14 @@ export function App() {
                 if (save.level < UNLOCK_ROYAL_SLOTS_LEVEL) {
                   openModal('rewards');
                 } else {
-                  soundFx.playClick();
-                  setSave((prev) => ({
-                    ...prev,
-                    royalModeEnabled: !prev.royalModeEnabled,
-                  }));
+                  setSave((prev) => {
+                    const nextMode = !prev.royalModeEnabled;
+                    soundFx.playRoyalModeToggle(nextMode);
+                    return {
+                      ...prev,
+                      royalModeEnabled: nextMode,
+                    };
+                  });
                 }
               }}
               className="relative aspect-[2116/921] w-full transition-transform active:scale-97"
@@ -943,6 +1019,9 @@ export function App() {
         stats={save.stats}
         recentSpins={save.recentSpins}
         soundEnabled={save.settings.soundEnabled}
+        soundVolume={save.settings.soundVolume}
+        musicEnabled={save.settings.musicEnabled}
+        musicVolume={save.settings.musicVolume}
         reducedMotionOverride={save.settings.reducedMotionOverride}
         confirmReset={confirmReset}
         setConfirmReset={setConfirmReset}
@@ -951,21 +1030,11 @@ export function App() {
         onClaimDailyBonus={handleClaimDailyBonus}
         onExchangeGems={handleExchangeGems}
         onClaimMission={handleClaimMission}
-        onToggleSound={() =>
-          setSave((prev) => ({
-            ...prev,
-            settings: { ...prev.settings, soundEnabled: !prev.settings.soundEnabled },
-          }))
-        }
-        onToggleReducedMotion={() =>
-          setSave((prev) => ({
-            ...prev,
-            settings: {
-              ...prev.settings,
-              reducedMotionOverride: !prev.settings.reducedMotionOverride,
-            },
-          }))
-        }
+        onToggleSound={handleToggleSound}
+        onChangeSoundVolume={handleChangeSoundVolume}
+        onToggleMusic={handleToggleMusic}
+        onChangeMusicVolume={handleChangeMusicVolume}
+        onToggleReducedMotion={handleToggleReducedMotion}
         onResetSave={() => {
           if (isSpinning) return;
           const fresh = resetGameSave();

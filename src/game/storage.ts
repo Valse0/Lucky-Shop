@@ -36,6 +36,9 @@ export interface GameSaveData {
   recentSpins: SpinHistoryEntry[];
   settings: {
     soundEnabled: boolean;
+    soundVolume: number;
+    musicEnabled: boolean;
+    musicVolume: number;
     reducedMotionOverride: boolean;
   };
 }
@@ -67,6 +70,9 @@ export function createInitialSaveData(now = Date.now()): GameSaveData {
     recentSpins: [],
     settings: {
       soundEnabled: true,
+      soundVolume: 0.85,
+      musicEnabled: true,
+      musicVolume: 0.65,
       reducedMotionOverride: false,
     },
   };
@@ -133,8 +139,30 @@ export function loadGameSave(now = Date.now()): GameSaveData {
         totalGoldWon: typeof parsed.stats?.totalGoldWon === 'number' && parsed.stats.totalGoldWon >= 0 ? Math.floor(parsed.stats.totalGoldWon) : base.stats.totalGoldWon,
       },
       settings: {
-        soundEnabled: typeof parsed.settings?.soundEnabled === 'boolean' ? parsed.settings.soundEnabled : base.settings.soundEnabled,
-        reducedMotionOverride: typeof parsed.settings?.reducedMotionOverride === 'boolean' ? parsed.settings.reducedMotionOverride : base.settings.reducedMotionOverride,
+        soundEnabled:
+          typeof parsed.settings?.soundEnabled === 'boolean'
+            ? parsed.settings.soundEnabled
+            : base.settings.soundEnabled,
+        soundVolume:
+          typeof parsed.settings?.soundVolume === 'number' &&
+          parsed.settings.soundVolume >= 0 &&
+          parsed.settings.soundVolume <= 1
+            ? parsed.settings.soundVolume
+            : 0.85,
+        musicEnabled:
+          typeof parsed.settings?.musicEnabled === 'boolean'
+            ? parsed.settings.musicEnabled
+            : true,
+        musicVolume:
+          typeof parsed.settings?.musicVolume === 'number' &&
+          parsed.settings.musicVolume >= 0 &&
+          parsed.settings.musicVolume <= 1
+            ? parsed.settings.musicVolume
+            : 0.65,
+        reducedMotionOverride:
+          typeof parsed.settings?.reducedMotionOverride === 'boolean'
+            ? parsed.settings.reducedMotionOverride
+            : base.settings.reducedMotionOverride,
       },
       claimedMissionIds: Array.isArray(parsed.claimedMissionIds) ? parsed.claimedMissionIds : [],
       recentSpins: Array.isArray(parsed.recentSpins) ? parsed.recentSpins.slice(0, 15) : [],

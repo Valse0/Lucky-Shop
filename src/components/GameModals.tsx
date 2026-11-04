@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Volume2, VolumeX, RotateCcw, Sparkles, Check } from 'lucide-react';
+import { X, Volume2, VolumeX, Music, Music2, RotateCcw, Sparkles, Check } from 'lucide-react';
 import { GAME_ASSETS } from '../game/assets';
 import {
   GEM_EXCHANGE_PACKS,
@@ -34,6 +34,9 @@ interface GameModalsProps {
   stats: PlayerStats;
   recentSpins: SpinHistoryEntry[];
   soundEnabled: boolean;
+  soundVolume: number;
+  musicEnabled: boolean;
+  musicVolume: number;
   reducedMotionOverride: boolean;
   confirmReset: boolean;
   setConfirmReset: (v: boolean) => void;
@@ -43,6 +46,9 @@ interface GameModalsProps {
   onExchangeGems: (gemsCost: number, goldGranted: number) => void;
   onClaimMission: (missionId: string) => void;
   onToggleSound: () => void;
+  onChangeSoundVolume: (v: number) => void;
+  onToggleMusic: () => void;
+  onChangeMusicVolume: (v: number) => void;
   onToggleReducedMotion: () => void;
   onResetSave: () => void;
 }
@@ -60,6 +66,9 @@ export const GameModals: React.FC<GameModalsProps> = ({
   stats,
   recentSpins,
   soundEnabled,
+  soundVolume,
+  musicEnabled,
+  musicVolume,
   reducedMotionOverride,
   confirmReset,
   setConfirmReset,
@@ -69,6 +78,9 @@ export const GameModals: React.FC<GameModalsProps> = ({
   onExchangeGems,
   onClaimMission,
   onToggleSound,
+  onChangeSoundVolume,
+  onToggleMusic,
+  onChangeMusicVolume,
   onToggleReducedMotion,
   onResetSave,
 }) => {
@@ -457,28 +469,103 @@ export const GameModals: React.FC<GameModalsProps> = ({
 
           {activeModal === 'settings' && (
             <div className="space-y-3">
-              <button
-                type="button"
-                onClick={onToggleSound}
-                className="flex min-h-[48px] w-full items-center justify-between rounded-2xl border border-amber-300/30 bg-[#381808]/85 px-4 py-3 text-left"
-              >
-                <div className="flex items-center gap-3">
-                  {soundEnabled ? (
-                    <Volume2 className="h-5 w-5 text-amber-300" />
-                  ) : (
-                    <VolumeX className="h-5 w-5 text-amber-200/60" />
-                  )}
-                  <div>
-                    <div className="text-sm font-semibold text-white">Sound Effects</div>
-                    <div className="text-xs text-amber-200/75">
-                      Reel stop chimes and celebration melodies
+              {/* 1. Background Music (BGM) */}
+              <div className="rounded-2xl border border-amber-300/30 bg-[#381808]/85 p-3.5 space-y-2.5">
+                <button
+                  type="button"
+                  onClick={onToggleMusic}
+                  className="flex min-h-[44px] w-full items-center justify-between text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    {musicEnabled ? (
+                      <Music className="h-5 w-5 text-amber-300 shrink-0" />
+                    ) : (
+                      <Music2 className="h-5 w-5 text-amber-200/50 shrink-0" />
+                    )}
+                    <div>
+                      <div className="text-sm font-semibold text-white">Background Music</div>
+                      <div className="text-xs text-amber-200/75">
+                        Whimsical village arcade fantasy theme
+                      </div>
                     </div>
                   </div>
+                  <span
+                    className={`font-num text-xs font-bold px-2 py-0.5 rounded-md ${
+                      musicEnabled
+                        ? 'bg-amber-400/20 text-amber-300 border border-amber-300/40'
+                        : 'bg-zinc-800/40 text-amber-200/50 border border-zinc-700/40'
+                    }`}
+                  >
+                    {musicEnabled ? 'On' : 'Muted'}
+                  </span>
+                </button>
+
+                <div className="pt-1 flex items-center gap-3">
+                  <span className="text-[11px] font-semibold text-amber-200/80 w-12 shrink-0">
+                    Vol: {Math.round(musicVolume * 100)}%
+                  </span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    disabled={!musicEnabled}
+                    value={musicVolume}
+                    onChange={(e) => onChangeMusicVolume(parseFloat(e.target.value))}
+                    aria-label="Music Volume"
+                    className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-[#241005] accent-amber-400 disabled:opacity-40"
+                  />
                 </div>
-                <span className="font-num text-xs font-bold text-amber-300">
-                  {soundEnabled ? 'On' : 'Muted'}
-                </span>
-              </button>
+              </div>
+
+              {/* 2. Sound Effects (SFX) */}
+              <div className="rounded-2xl border border-amber-300/30 bg-[#381808]/85 p-3.5 space-y-2.5">
+                <button
+                  type="button"
+                  onClick={onToggleSound}
+                  className="flex min-h-[44px] w-full items-center justify-between text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    {soundEnabled ? (
+                      <Volume2 className="h-5 w-5 text-amber-300 shrink-0" />
+                    ) : (
+                      <VolumeX className="h-5 w-5 text-amber-200/50 shrink-0" />
+                    )}
+                    <div>
+                      <div className="text-sm font-semibold text-white">Sound Effects</div>
+                      <div className="text-xs text-amber-200/75">
+                        Reel stop clicks, coins, fanfares & bonuses
+                      </div>
+                    </div>
+                  </div>
+                  <span
+                    className={`font-num text-xs font-bold px-2 py-0.5 rounded-md ${
+                      soundEnabled
+                        ? 'bg-amber-400/20 text-amber-300 border border-amber-300/40'
+                        : 'bg-zinc-800/40 text-amber-200/50 border border-zinc-700/40'
+                    }`}
+                  >
+                    {soundEnabled ? 'On' : 'Muted'}
+                  </span>
+                </button>
+
+                <div className="pt-1 flex items-center gap-3">
+                  <span className="text-[11px] font-semibold text-amber-200/80 w-12 shrink-0">
+                    Vol: {Math.round(soundVolume * 100)}%
+                  </span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    disabled={!soundEnabled}
+                    value={soundVolume}
+                    onChange={(e) => onChangeSoundVolume(parseFloat(e.target.value))}
+                    aria-label="Sound Effects Volume"
+                    className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-[#241005] accent-amber-400 disabled:opacity-40"
+                  />
+                </div>
+              </div>
 
               <button
                 type="button"
